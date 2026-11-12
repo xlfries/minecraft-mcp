@@ -18,4 +18,4 @@ Copyright notices are kept from the original upstream project.
 
 This is not an official fork of the upstream project and has no affiliation, endorsement or official maintenance.
 
-Unless otherwise noted, original and modified portions of this project are licenced under the Apache License, Version 2.0.
+Unless otherwise noted, original and modified portions of this project are licensed under the Apache License, Version 2.0.
