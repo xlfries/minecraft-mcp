@@ -64,15 +64,24 @@ export class OllamaProvider implements Provider {
       signal: request.signal
     });
 
-    const data = await response.json() as OllamaResponse;
+    const responseText = await response.text();
+    let data: OllamaResponse | undefined;
+
+    try {
+      data = JSON.parse(responseText) as OllamaResponse;
+    } catch {
+      if (response.ok) {
+        throw new Error("Ollama returned an invalid response");
+      }
+    }
 
     if (!response.ok) {
       throw new Error(
-        data.error ?? `Ollama request failed: HTTP ${response.status}`
+        data?.error ?? `Ollama request failed: HTTP ${response.status}`
       );
     }
 
-    if (!data.message) {
+    if (!data?.message) {
       throw new Error("Ollama returned an invalid response");
     }
 

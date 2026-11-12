@@ -1,3 +1,4 @@
+
 import { mkdir, appendFile } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
@@ -14,8 +15,17 @@ export class HistoryStore {
   private pending: Promise<void> = Promise.resolve();
 
   constructor(identity: string, root = "data/bots") {
-    const safeIdentity = identity
-      .replace(/[<>:"/\\|?*\x00-\x1f]/g, "_")
+    const invalidCharacters = '<>:"/\\|?*';
+
+    const safeIdentity = [...identity]
+      .map((character) => {
+        const code = character.charCodeAt(0);
+
+        return invalidCharacters.includes(character) || code < 32
+          ? "_"
+          : character;
+      })
+      .join("")
       .replace(/^\.+|\.+$/g, "")
       .trim();
 
@@ -80,7 +90,7 @@ export class HistoryStore {
         }
       }
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      if ((error as { code?: string }).code !== "ENOENT") {
         throw error;
       }
     }
@@ -124,7 +134,7 @@ export class HistoryStore {
         }
       }
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      if ((error as { code?: string }).code !== "ENOENT") {
         throw error;
       }
     }
