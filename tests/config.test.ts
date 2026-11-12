@@ -77,3 +77,38 @@ test('parseConfig handles numeric port as number type', (t) => {
   
   process.argv = originalArgv;
 });
+
+
+test('parseConfig keeps the built-in agent disabled by default', (t) => {
+  const originalArgv = process.argv;
+  process.argv = ['node', 'script.js'];
+
+  const config = parseConfig();
+
+  t.false(config.agent);
+  t.is(config.agentModel, 'llama3.2:3b');
+  t.is(config.ollamaUrl, 'http://localhost:11434');
+  t.is(config.agentTools, 'basic');
+  t.is(config.chatPrefix, '!bot');
+
+  process.argv = originalArgv;
+});
+
+test('parseConfig accepts built-in agent options', (t) => {
+  const originalArgv = process.argv;
+  process.argv = [
+    'node', 'script.js', '--agent', '--agent-model', 'qwen2.5-coder:3b',
+    '--ollama-url', 'http://127.0.0.1:11434', '--agent-tools', 'all',
+    '--chat-prefix', '!agent'
+  ];
+
+  const config = parseConfig();
+
+  t.true(config.agent);
+  t.is(config.agentModel, 'qwen2.5-coder:3b');
+  t.is(config.ollamaUrl, 'http://127.0.0.1:11434');
+  t.is(config.agentTools, 'all');
+  t.is(config.chatPrefix, '!agent');
+
+  process.argv = originalArgv;
+});
