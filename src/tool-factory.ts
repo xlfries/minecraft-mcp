@@ -1,16 +1,10 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z, ZodError, ZodRawShape, ZodType } from "zod";
 import { BotConnection } from './bot-connection.js';
-
-type McpResponse = {
-  content: { type: "text"; text: string }[];
-  isError?: boolean;
-  [key: string]: unknown;
-};
+import type { McpResponse, ToolSink } from './tool-registry.js';
 
 export class ToolFactory {
   constructor(
-    private server: McpServer,
+    private server: ToolSink,
     private connection: BotConnection
   ) {}
 
